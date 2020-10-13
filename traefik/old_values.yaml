@@ -1,0 +1,24 @@
+externalIP: 192.168.9.17
+loadBalancerIP: 191.101.192.72
+dashboard:
+  enabled: true
+  domain: traefik.kube.a-copy.live 
+ssl:
+  enabled: true
+#  enforced: true
+#  permanentRedirect: true
+  insecureSkipVerify: true
+acme:
+  enabled: true
+  email: admin@floretos.com
+  logging: true
+  onHostRule: true
+  staging: false
+  persistence:
+  ▏ enabled: false
+kubernetes:
+  namespaces:
+    default:
+    kube-system:
+rbac:
+  enabled: true

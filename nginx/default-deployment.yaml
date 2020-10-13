@@ -1,0 +1,85 @@
+
+# kubetpl:syntax:go-template
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.version: 1.21.0 ()
+  creationTimestamp: null
+  labels:
+    io.kompose.service: {{ .NAME }}
+    app: {{ .NAME }}
+  name: {{ .NAME }}
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      io.kompose.service: api
+      app: {{ .NAME }}
+  strategy: {}
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert
+        kompose.version: 1.21.0 ()
+      creationTimestamp: null
+      labels:
+        io.kompose.network/production-services: "true"
+        io.kompose.network/traefik: "true"
+        io.kompose.service: api
+        app: {{ .NAME }}
+    spec:
+      containers:
+      - envFrom:
+        - configMapRef:
+            name: {{ .NAME }}-configmap
+        image: nginx:latest
+        imagePullPolicy: ""
+        name: api
+        resources: {}
+        volumeMounts:
+        - mountPath: /etc/nginx/conf.d
+          name: nginx-conf
+          readOnly: true
+      imagePullSecrets:
+      - name: harbor.dev.bangkokkomatsusales.com
+      restartPolicy: Always
+      serviceAccountName: ""
+      volumes:
+      - name: nginx-conf
+        configMap:
+          name: nginx-conf # place ConfigMap `nginx-conf` on /etc/nginx
+          items:
+            - key: default.conf
+              path: nginx.conf
+status: {}
+
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: {{ .NAME }}
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`tinyfam.staging.kube.floret.dev`)
+      kind: Rule
+      services:
+        - name: {{ .NAME }}
+          kind: Service
+          port: 80
+          responseForwarding:
+            flushInterval: 1ms
+          scheme: https
+  tls:
+    certResolver: letsencrypt
+    domains:
+    - tinyfam.staging.kube.floret.dev
