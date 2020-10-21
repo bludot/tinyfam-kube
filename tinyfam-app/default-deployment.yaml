@@ -37,7 +37,7 @@ spec:
         app: {{ .NAME }}
     spec:
       containers:
-      - image: nginx:latest
+      - image: harbor.floret.dev/tinyfam/tinyfam@sha256:f1d944d0522fd881430dd99b23319b36d9dbab2cb4757a97ffe30d9cbe6f1642
         imagePullPolicy: ""
         name: api
         resources: {}
@@ -46,13 +46,13 @@ spec:
           name: nginx-conf
           readOnly: true
       imagePullSecrets:
-      - name: harbor.dev.bangkokkomatsusales.com
+      - name: harborcred
       restartPolicy: Always
       serviceAccountName: ""
       volumes:
       - name: nginx-conf
         configMap:
-          name: tinyfam-staging-configmap # place ConfigMap `nginx-conf` on /etc/nginx
+          name: {{ .NAME }}-configmap # place ConfigMap `nginx-conf` on /etc/nginx
           items:
             - key: default.conf
               path: default.conf

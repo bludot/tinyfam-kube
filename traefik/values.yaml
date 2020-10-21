@@ -1,12 +1,31 @@
-additionalArguments:
-  - "--certificatesresolvers.letsencrypt.acme.email=admin@floretos.com"
-  - "--certificatesresolvers.letsencrypt.acme.storage=/data/acme.json"
-  - "--certificatesresolvers.letsencrypt.acme.caserver=https://acme-v02.api.letsencrypt.org/directory"
-  - "--certificatesresolvers.letsencrypt.acme.tlschallenge=true"
-  - "--api.insecure=true"
-  - "--accesslog=true"
-  - "--log.level=INFO"
-
+externalIP: 192.168.9.17
+#191.101.192.72
+#192.168.9.17
+#externalIP: 203.209.80.13
+#loadBalancerIP: 192.168.9.17
+dashboard:
+  enabled: true
+  domain: traefik.kube.a-copy.live
+ssl:
+  enabled: true
+#  enforced: true
+#  permanentRedirect: true
+  insecureSkipVerify: true
+acme:
+  enabled: true
+  email: admin@floretos.com
+  logging: true
+  onHostRule: true
+  staging: false
+  persistence:
+    enabled: false
+kubernetes:
+  namespaces:
+    - default
+    - kube-system
+    - tinyfam
+rbac:
+  enabled: true
 persistence:
   enabled: false
 #  existingClaim: ""
@@ -17,23 +36,4 @@ persistence:
   annotations: {}
   # subPath: "" # only mount a subpath of the Volume into the pod
 
-
-service:
-  enabled: true
-  type: LoadBalancer
-  # Additional annotations (e.g. for cloud provider specific config)
-  annotations: {}
-  # Additional service labels (e.g. for filtering Service by custom labels)
-  labels: {}
-  # Additional entries here will be added to the service spec. Cannot contains
-  # type, selector or ports entries.
-  spec: 
-    # externalTrafficPolicy: Cluster
-    loadBalancerIP: "191.101.192.72"
-    # clusterIP: "2.3.4.5"
-  loadBalancerSourceRanges: []
-    # - 192.168.0.1/32
-    # - 172.16.0.0/16
-  externalIPs:
-    - 192.168.9.17
 

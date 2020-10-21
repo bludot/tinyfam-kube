@@ -6,6 +6,7 @@ kind: ConfigMap
 metadata:
   name: {{ .NAME }}-configmap
 data:
+  NAME: tinyfam
   default.conf: |
     server {
       server_name localhost;
